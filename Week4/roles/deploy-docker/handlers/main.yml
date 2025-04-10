@@ -1,0 +1,4 @@
+- name: Herstart Docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted

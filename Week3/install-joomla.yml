@@ -1,0 +1,108 @@
+---
+- name: Installeer Docker en Joomla in een Docker container op een AWS Amazon Linux instance
+  hosts: KlantA_Prod_3
+  become: yes
+  vars_prompt:
+    - name: confirm_install
+      prompt: "Wilt u Joomla installeren? (ja/nee)"
+      private: no
+
+  tasks:
+    - name: Stop playbook als installatie niet bevestigd is
+      fail:
+        msg: "Installatie geannuleerd door gebruiker."
+      when: confirm_install != "ja"
+
+    - name: Installeer yum-utils
+      yum:
+        name: yum-utils
+        state: presents
+
+    - name: Controleer of Docker aanwezig is
+      command: docker version --format '{{ '{{' }}.Server.Version{{ '}}' }}'
+      register: docker_ver
+      ignore_errors: true
+      changed_when: false
+
+    - name: Toon Docker versie
+      debug:
+        msg: "Docker versie: {{ docker_ver.stdout | default('niet geïnstalleerd') }}"
+
+    - name: Installeer Docker indien nodig
+      shell: curl -fsSL https://raw.githubusercontent.com/Stensel8/basic-scripts/refs/heads/main/docker_installer.sh | sudo bash
+      when: docker_ver.rc != 0 or (docker_ver.stdout is version(required_docker, '<'))
+      notify: Herstart Docker
+
+    - name: Wacht tot Docker beschikbaar is
+      command: docker info
+      register: docker_info
+      retries: 5
+      delay: 3
+      until: docker_info.rc == 0
+      changed_when: false
+
+    - name: Zorg dat Docker draait en ingeschakeld is
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Verwijder eventueel bestaande MySQL container
+      docker_container:
+        name: mysql
+        state: absent
+        force_kill: yes
+      ignore_errors: yes
+
+    - name: Start MySQL container
+      docker_container:
+        name: mysql
+        image: mysql:8.0.13
+        state: started
+        restart_policy: always
+        env:
+          MYSQL_ROOT_PASSWORD: mysecretpassword
+          MYSQL_DATABASE: joomla
+          MYSQL_USER: joomla
+          MYSQL_PASSWORD: joomlapassword
+        ports:
+          - "3306:3306"
+
+    - name: Wacht tot MySQL beschikbaar is
+      command: docker exec mysql mysqladmin ping -h localhost -pmysecretpassword
+      register: mysql_ping
+      retries: 10
+      delay: 3
+      until: "'mysqld is alive' in mysql_ping.stdout"
+
+    - name: Verwijder eventueel bestaande Joomla container
+      docker_container:
+        name: joomla
+        state: absent
+        force_kill: yes
+      ignore_errors: yes
+
+    - name: Trek de Joomla Docker image binnen en start de container
+      docker_container:
+        name: joomla
+        image: joomla:latest
+        ports:
+          - "80:80"
+        env:
+          JOOMLA_DB_HOST: mysql
+          JOOMLA_DB_USER: joomla
+          JOOMLA_DB_PASSWORD: joomlapassword
+          JOOMLA_DB_NAME: joomla
+        links:
+          - "mysql:mysql"
+        state: started
+        restart_policy: always
+        privileged: true
+
+
+
+  handlers:
+    - name: Herstart Docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted

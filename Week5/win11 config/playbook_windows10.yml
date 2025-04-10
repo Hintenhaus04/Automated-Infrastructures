@@ -1,0 +1,45 @@
+---
+- name: Add user, groups and programs
+  hosts: win11vm
+  gather_facts: no
+  vars_prompt:
+  - name: username
+    prompt: Username
+    private: no
+  - name: password
+    prompt: password
+    private: yes
+  - name: groepen
+    prompt: Welke groepen moet deze gebruiker lid van zijn(gebruikers, finance, it, management) gescheiden door komma's)?
+    private: no
+
+  tasks:
+    - name: Create all groups
+      ansible.windows.win_group:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - finance
+        - it
+        - management
+
+    - name: Create user
+      ansible.windows.win_user:
+        name: "{{ username }}"
+        password: "{{ password }}"
+        groups: "{{ groepen }}"
+
+    - name: create C:\management
+      ansible.windows.win_file:
+        state: directory
+        path: C:\management
+
+    - name: Create a file from a Jinja2 template
+      ansible.windows.win_template:
+        src: windows_template.j2
+        dest: C:\management\windows_file
+
+    - name: install git
+      win_chocolatey:
+        name: git
+        state: present

@@ -1,0 +1,14 @@
+# Namen en versies
+db_container: wordpress_db
+wp_container: wordpress_app
+mariadb_image: mariadb:11.7.2
+wordpress_image: wordpress:php8.4-apache
+# Database instellingen
+db_root_pw: "your_root_password"
+db_user: wordpress
+db_pw: "your_wordpress_password"
+db_name: wordpress
+mariadb_port: "3306"
+wp_port: "80"
+# Vereiste Docker versie
+required_docker: "27.3.1"

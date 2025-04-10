@@ -1,0 +1,12 @@
+[KlantA_Test_1]
+ec2-user@44.213.63.228
+[KlantA_Prod_1]
+ec2-user@100.25.131.39
+[KlantA_Prod_2]
+ec2-user@3.85.1.250
+[KlantA_Prod_3]
+ec2-user@35.153.33.112
+
+[all:vars]
+ansible_ssh_private_key_file=~/.ssh/key1.pem
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

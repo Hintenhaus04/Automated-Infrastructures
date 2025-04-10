@@ -1,0 +1,28 @@
+    - name: Controleer of Docker aanwezig is
+      command: docker version --format '{{ '{{' }}.Server.Version{{ '}}' }}'
+      register: docker_ver
+      ignore_errors: true
+      changed_when: false
+
+    - name: Toon Docker versie
+      debug:
+        msg: "Docker versie: {{ docker_ver.stdout | default('niet geïnstalleerd') }}"
+
+    - name: Installeer Docker indien nodig
+      shell: curl -fsSL https://raw.githubusercontent.com/Stensel8/basic-scripts/refs/heads/main/docker_installer.sh | sudo bash
+      when: docker_ver.rc != 0 or (docker_ver.stdout is version(required_docker, '<'))
+      notify: Herstart Docker
+
+    - name: Wacht tot Docker beschikbaar is
+      command: docker info
+      register: docker_info
+      retries: 5
+      delay: 3
+      until: docker_info.rc == 0
+      changed_when: false
+
+    - name: Zorg dat Docker draait en ingeschakeld is
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true   

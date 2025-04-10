@@ -1,0 +1,11 @@
+[windows]
+dc ansible_host=192.168.71.131
+
+[windows:vars]
+ansible_user=Administrator
+ansible_password=Wout_2016
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_port=5985
+ansible_winrm_scheme=http
+ansible_winrm_server_cert_validation=ignore

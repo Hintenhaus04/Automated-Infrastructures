@@ -1,0 +1,19 @@
+users:
+  randywatts:
+    firstname: "randy"
+    surname: "watts"
+    password: "Better2gether!"
+    email: "randywatts@hintenhaus.local"
+    upn: "randywatts@hintenhaus.local"
+  jeffdowns:
+    firstname: "jeff"
+    surname: "downs"
+    password: "Better2gether!"
+    email: "jeffdowns@hintenhaus.local"
+    upn: "jeffdowns@hintenhaus.local"
+  bobwilson:
+    firstname: "bob"
+    surname: "wilson"
+    password: "Better2gether!"
+    email: "bobwilson@hintenhaus.local"
+    upn: "bobwilson@hintenhaus.local"

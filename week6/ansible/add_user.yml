@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  gather_facts: false
+  become: false
+  vars:
+    csvfile: "domain_users.csv"
+  tasks:
+  - name: Parse CSV To YAML
+    template:
+      src: "templates/domain_users_csv.j2"
+      dest: "files/domain_users.yml"
+    run_once: true
+
+- hosts: dc
+  gather_facts: false
+  vars_files:
+    - files/domain_users.yml
+  tasks:
+  - name: Enable Users and Prevent Password Change
+    win_domain_user:
+      name: "{{ item.key }}"
+      firstname: "{{ item.value.firstname }}"
+      surname: "{{ item.value.surname }}"
+      password: "{{ item.value.password }}"
+      email: "{{ item.value.email }}"
+      upn: "{{ item.value.upn }}"
+      enabled: yes
+      user_cannot_change_password: yes
+      password_expired: no
+      attributes:
+        displayName: "{{ item.value.firstname }} {{ item.value.surname }}"
+    loop: "{{ lookup('dict', users) }}"
+
+  - name: Unlock User Accounts with Powershell
+    win_shell: "Unlock-ADAccount -Identity '{{ item.key }}'"
+    loop: "{{ lookup('dict', users) }}"

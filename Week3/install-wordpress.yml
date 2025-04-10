@@ -1,0 +1,89 @@
+---
+- name: Installeer en deploy WordPress en MariaDB via Docker
+  hosts: KlantA_Prod_1, KlantA_Prod_2
+  become: true
+  vars:
+    # Namen en versies
+    db_container: wordpress_db
+    wp_container: wordpress_app
+    mariadb_image: mariadb:11.7.2
+    wordpress_image: wordpress:php8.4-apache
+    # Database instellingen
+    db_root_pw: "your_root_password"
+    db_user: wordpress
+    db_pw: "your_wordpress_password"
+    db_name: wordpress
+    mariadb_port: "3306"
+    wp_port: "80"
+    # Vereiste Docker versie
+    required_docker: "27.3.1"
+
+  tasks:
+    - name: Controleer of Docker aanwezig is
+      command: docker version --format '{{ '{{' }}.Server.Version{{ '}}' }}'
+      register: docker_ver
+      ignore_errors: true
+      changed_when: false
+
+    - name: Toon Docker versie
+      debug:
+        msg: "Docker versie: {{ docker_ver.stdout | default('niet geïnstalleerd') }}"
+
+    - name: Installeer Docker indien nodig
+      shell: curl -fsSL https://raw.githubusercontent.com/Stensel8/basic-scripts/refs/heads/main/docker_installer.sh | sudo bash
+      when: docker_ver.rc != 0 or (docker_ver.stdout is version(required_docker, '<'))
+      notify: Herstart Docker
+
+    - name: Wacht tot Docker beschikbaar is
+      command: docker info
+      register: docker_info
+      retries: 5
+      delay: 3
+      until: docker_info.rc == 0
+      changed_when: false
+
+    - name: Zorg dat Docker draait en ingeschakeld is
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Start MariaDB container
+      community.docker.docker_container:
+        name: "{{ db_container }}"
+        image: "{{ mariadb_image }}"
+        state: started
+        restart_policy: always
+        env:
+          MYSQL_ROOT_PASSWORD: "{{ db_root_pw }}"
+          MYSQL_USER: "{{ db_user }}"
+          MYSQL_PASSWORD: "{{ db_pw }}"
+          MYSQL_DATABASE: "{{ db_name }}"
+        published_ports:
+          - "{{ mariadb_port }}:{{ mariadb_port }}"
+        volumes:
+          - "/var/lib/{{ db_container }}:/var/lib/mysql"
+
+    - name: Start WordPress container
+      community.docker.docker_container:
+        name: "{{ wp_container }}"
+        image: "{{ wordpress_image }}"
+        state: started
+        restart_policy: always
+        links:
+          - "{{ db_container }}:db"
+        env:
+          WORDPRESS_DB_HOST: "db:{{ mariadb_port }}"
+          WORDPRESS_DB_USER: "{{ db_user }}"
+          WORDPRESS_DB_PASSWORD: "{{ db_pw }}"
+          WORDPRESS_DB_NAME: "{{ db_name }}"
+        published_ports:
+          - "{{ wp_port }}:80"
+        volumes:
+          - "/var/www/wordpress:/var/www/html"
+
+  handlers:
+    - name: Herstart Docker
+      ansible.builtin.service:
+        name: docker
+        state: restarted

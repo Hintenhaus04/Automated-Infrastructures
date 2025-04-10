@@ -1,0 +1,25 @@
+- name: Configureer webservers
+  hosts: all
+  become: true
+  vars_files:
+    - host_vars/{{ inventory_hostname }}.yml
+
+  tasks:
+    - name: Docker installatie
+      include_role:
+        name: deploy-docker
+
+    - name: WordPress deployment
+      include_role:
+        name: wordpress
+      when: website_type == 'wordpress'
+
+    - name: Joomla deployment
+      include_role:
+        name: joomla
+      when: website_type == 'joomla'
+
+    - name: Custom site deployment
+      include_role:
+        name: custom-website
+      when: website_type == 'custom'

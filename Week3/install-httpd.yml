@@ -1,0 +1,63 @@
+---
+- name: Installeer Docker en een normale webserver (httpd) op een AWS Amazon Linux instance
+  hosts: KlantA_Prod_3
+  become: yes
+  vars_prompt:
+    - name: confirm_install
+      prompt: "Wilt u de normale webserver installeren? (ja/nee)"
+      private: no
+
+  tasks:
+    - name: Stop playbook als installatie niet bevestigd is
+      fail:
+        msg: "Installatie geannuleerd door gebruiker."
+      when: confirm_install != "ja"
+
+    - name: Installeer Docker via Docker CE repository op Amazon Linux
+      block:
+        - name: Installeer yum-utils
+          yum:
+            name: yum-utils
+            state: present
+
+        - name: Voeg de Docker CE repository toe
+          yum_repository:
+            name: docker-ce
+            description: Docker CE Stable - $basearch
+            baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+            enabled: yes
+            gpgcheck: yes
+            gpgkey: https://download.docker.com/linux/centos/gpg
+
+        - name: Installeer Docker CE en gerelateerde pakketten
+          yum:
+            name:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-buildx-plugin
+              - docker-compose-plugin
+            state: present
+      when: ansible_distribution == "Amazon"
+
+    - name: Start en activeer de Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Installeer webserver (httpd) via yum
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start en activeer de httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Maak een standaard index.html met welkomstboodschap
+      copy:
+        dest: /var/www/html/index.html
+        content: "<html><body><h1>Welkom klant, uw webserver is succesvol geïnstalleerd!</h1></body></html>"

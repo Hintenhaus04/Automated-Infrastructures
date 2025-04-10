@@ -1,0 +1,14 @@
+---
+- name: Enable users and restrict password change
+  hosts: windows_servers
+  gather_facts: no
+  vars_files:
+    - users.yml
+
+  tasks:
+    - name: Enable user accounts and restrict password change
+      win_domain_user:
+        name: "{{ item.firstname }}.{{ item.lastname }}"
+        enabled: yes
+        user_cannot_change_password: yes
+      loop: "{{ users }}"

@@ -1,0 +1,11 @@
+{% set lines = lookup('file', csvfile).splitlines() %}
+users:
+{% for line in lines[1:] %}
+{% set fields = line.split(',') %}
+  {{ fields[0]|trim() }}:
+    firstname: "{{ fields[1]|trim() }}"
+    surname: "{{ fields[2]|trim() }}"
+    password: "{{ fields[3]|trim() }}"
+    email: "{{ fields[4]|trim() }}"
+    upn: "{{ fields[4]|trim() }}"
+{% endfor %}

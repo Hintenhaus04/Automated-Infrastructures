@@ -1,0 +1,23 @@
+- name: Installeer NGINX
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Start en activeer NGINX
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Maak webmap aan
+  file:
+    path: /usr/share/nginx/html
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Plaats aangepaste index.html
+  template:
+    src: index.html.j2
+    dest: /usr/share/nginx/html/index.html

@@ -1,0 +1,29 @@
+---
+- name: Deploy Nginx load balancer via Docker
+  hosts: KlantA_Test_1
+  become: true
+
+  tasks:
+    - name: Render nginx.conf from template
+      ansible.builtin.template:
+        src: "nginx.conf"
+        dest: "{{ host_nginx_conf }}"
+      # This builds the nginx.conf file with the IP addresses from your inventory
+
+    - name: Remove any existing container with the same name
+      community.docker.docker_container:
+        name: "nginx"
+        state: absent
+      ignore_errors: true
+
+    - name: Start the Nginx load balancer container
+      community.docker.docker_container:
+        name: "nginx"
+        image: "nginx:1.27.4-alpine-slim"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "80:80"
+        volumes:
+          - "/tmp/nginx.conf:/etc/nginx/nginx.conf:ro"
+      # Mount the generated configuration file into the container as read-only

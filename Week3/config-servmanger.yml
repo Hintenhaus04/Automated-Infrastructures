@@ -1,0 +1,21 @@
+---
+- name: Maak beheeraccount servmanager aan op webservers en loadbalancer
+  hosts: KlantA_Prod_1, KlantA_Prod_2, KlantA_Test_1
+  become: yes
+  vars_prompt:
+    - name: "servmanager_password"
+      prompt: "Voer het wachtwoord in voor de gebruiker servmanager"
+      private: yes
+  vars:
+    # Voorbeeld van een vooraf gegenereerde SHA512 hash (pas dit aan met jouw gegenereerde hash)
+    servmanager_password_hash: "$6$rounds=656000$...jouw_gehashte_wachtwoord..."
+  tasks:
+    - name: Maak de gebruiker servmanager aan en voeg toe aan de wheel groep
+      user:
+        name: servmanager
+        password: "{{ servmanager_password_hash }}"
+        groups: wheel
+        append: yes
+        shell: /bin/bash
+        state: present
+

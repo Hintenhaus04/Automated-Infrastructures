@@ -1,0 +1,11 @@
+---
+users:
+  - firstname: John
+    lastname: Doe
+    password: "Secret123!"
+  - firstname: Jane
+    lastname: Smith
+    password: "Secret123!"
+  - firstname: Alice
+    lastname: Johnson
+    password: "Secret123!"

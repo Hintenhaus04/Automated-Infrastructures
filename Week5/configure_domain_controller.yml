@@ -1,0 +1,26 @@
+---
+- name: Configure Windows Server 2022 as Domain Controller
+  hosts: windows_servers
+  gather_facts: no
+  vars_prompt:
+    - name: admin_password
+      prompt: "Enter domain admin password"
+      private: yes
+
+  tasks:
+    - name: Ensure required Windows features are installed
+      win_feature:
+        name:
+          - AD-Domain-Services
+        state: present
+
+    - name: Promote server to domain controller
+      win_domain:
+        dns_domain_name: pixelperfect.local
+        safe_mode_password: "{{ admin_password }}"
+      register: domain_result
+
+    - name: Reboot after domain promotion
+      win_reboot:
+        msg: "Rebooting to complete domain promotion"
+      when: domain_result.changed
