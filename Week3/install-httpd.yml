@@ -1,3 +1,11 @@
+# This playbook installs Docker and a basic web server (httpd) on an AWS Amazon Linux instance.
+# It includes a confirmation prompt to proceed with the installation.
+# Key tasks:
+# - Installs Docker using the Docker CE repository.
+# - Starts and enables the Docker service.
+# - Installs and configures the httpd web server.
+# - Creates a default index.html with a welcome message.
+# Note: The playbook is designed for Amazon Linux and uses conditional checks.
 ---
 - name: Installeer Docker en een normale webserver (httpd) op een AWS Amazon Linux instance
   hosts: KlantA_Prod_3

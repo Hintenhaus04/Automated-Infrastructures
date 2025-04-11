@@ -1,3 +1,8 @@
+# This Ansible playbook creates a user account named 'servmanager' on specified web servers and load balancers.
+# The user is added to the 'wheel' group for administrative privileges.
+# A hashed password is used for security, and the password is prompted interactively during execution.
+# Ensure the target hosts are correctly defined and accessible before running this playbook.
+
 ---
 - name: Maak beheeraccount servmanager aan op webservers en loadbalancer
   hosts: KlantA_Prod_1, KlantA_Prod_2, KlantA_Test_1
@@ -7,7 +12,6 @@
       prompt: "Voer het wachtwoord in voor de gebruiker servmanager"
       private: yes
   vars:
-    # Voorbeeld van een vooraf gegenereerde SHA512 hash (pas dit aan met jouw gegenereerde hash)
     servmanager_password_hash: "$6$rounds=656000$...jouw_gehashte_wachtwoord..."
   tasks:
     - name: Maak de gebruiker servmanager aan en voeg toe aan de wheel groep

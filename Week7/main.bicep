@@ -1,3 +1,24 @@
+/*
+This Bicep template deploys the following resources in Azure:
+
+1. A Virtual Network (VNet) with a single subnet:
+  - Address space: 10.0.0.0/16
+  - Subnet: 10.0.0.0/24
+
+2. A Network Security Group (NSG) with inbound rules to allow HTTP (port 80) and HTTPS (port 443) traffic.
+
+3. Public IP addresses for each virtual machine, dynamically allocated.
+
+4. Network Interfaces (NICs) for each virtual machine, associated with the NSG and VNet subnet.
+
+5. Three Virtual Machines (VMs) with:
+  - Ubuntu 18.04-LTS as the operating system.
+  - Standard_B1s as the VM size.
+  - Dynamic private and public IP allocation.
+  - Admin credentials (ensure secure handling in production).
+
+Note: Replace the hardcoded admin password with a secure method, such as Azure Key Vault or SSH keys, for production environments.
+*/
 param location string = resourceGroup().location
 param baseName string = 'webserver'
 param deploymentName string = 'Hintenhaus-webserver'

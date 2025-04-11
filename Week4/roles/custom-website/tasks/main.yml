@@ -1,3 +1,7 @@
+# This playbook installs and configures NGINX on the target system.
+# - Ensures the NGINX package is installed and the service is started and enabled.
+# - Creates the web directory with appropriate permissions.
+# - Deploys a custom index.html file using a Jinja2 template.
 - name: Installeer NGINX
   ansible.builtin.package:
     name: nginx

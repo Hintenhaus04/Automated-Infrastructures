@@ -1,3 +1,6 @@
+# This handler restarts the Docker service.
+# It ensures that any changes requiring a Docker restart are applied.
+# The 'state: restarted' ensures the service is stopped and started again.
 - name: Herstart Docker
   ansible.builtin.service:
     name: docker

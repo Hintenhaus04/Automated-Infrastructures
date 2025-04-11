@@ -1,3 +1,9 @@
+{# 
+This Jinja2 template processes a CSV file and generates a YAML-like structure 
+for user data. Each line in the CSV (excluding the header) is parsed into fields, 
+which are then used to populate user attributes such as firstname, surname, 
+password, email, and UPN. The `lookup('file', csvfile)` function reads the CSV file.
+#}
 {% set lines = lookup('file', csvfile).splitlines() %}
 users:
 {% for line in lines[1:] %}

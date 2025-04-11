@@ -1,3 +1,7 @@
+# This playbook installs Docker and Joomla in a Docker container on an AWS Amazon Linux instance.
+# It includes tasks to ensure Docker is installed and running, sets up MySQL and Joomla containers,
+# and configures their environment variables and dependencies. The playbook also handles user confirmation
+# and ensures proper service restarts when necessary. Error handling and retries are implemented for robustness.
 ---
 - name: Installeer Docker en Joomla in een Docker container op een AWS Amazon Linux instance
   hosts: KlantA_Prod_3

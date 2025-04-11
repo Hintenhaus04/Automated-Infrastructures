@@ -1,3 +1,7 @@
+# This playbook is used to deploy a load balancer for the production environment.
+# It targets the host group "KlantB_Prod_1" and requires elevated privileges (become: true).
+# The variable "webserver_ips" specifies the backend web server IPs for the load balancer.
+# The "loadbalancer" role is applied to configure the load balancer.
 ---
 - name: Deploy loadbalancer for production environment
   hosts: KlantB_Prod_1

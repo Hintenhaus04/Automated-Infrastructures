@@ -1,3 +1,9 @@
+# This playbook deploys an Nginx load balancer using Docker on the specified host.
+# It performs the following tasks:
+# 1. Renders an nginx.conf file from a template, using inventory data.
+# 2. Removes any existing Docker container named "nginx" to avoid conflicts.
+# 3. Starts a new Nginx container with the specified configuration, 
+#    exposing port 80 and mounting the generated nginx.conf as read-only.
 ---
 - name: Deploy Nginx load balancer via Docker
   hosts: KlantA_Test_1

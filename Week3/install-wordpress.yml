@@ -1,3 +1,8 @@
+# This Ansible playbook installs and deploys WordPress and MariaDB using Docker.
+# It ensures Docker is installed and running, and verifies the required version.
+# MariaDB and WordPress containers are configured with environment variables,
+# ports, and volumes for persistent storage. Docker is restarted if necessary.
+# Target hosts: KlantA_Prod_1, KlantA_Prod_2.
 ---
 - name: Installeer en deploy WordPress en MariaDB via Docker
   hosts: KlantA_Prod_1, KlantA_Prod_2

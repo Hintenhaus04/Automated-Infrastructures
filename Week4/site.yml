@@ -2,24 +2,24 @@
   hosts: all
   become: true
   vars_files:
-    - host_vars/{{ inventory_hostname }}.yml
+    - host_vars/{{ inventory_hostname }}.yml  # Dynamically load host-specific variables
 
   tasks:
     - name: Docker installatie
       include_role:
-        name: deploy-docker
+        name: deploy-docker  # Deploy Docker on the target hosts
 
     - name: WordPress deployment
       include_role:
-        name: wordpress
+        name: wordpress  # Deploy WordPress if the website type is 'wordpress'
       when: website_type == 'wordpress'
 
     - name: Joomla deployment
       include_role:
-        name: joomla
+        name: joomla  # Deploy Joomla if the website type is 'joomla'
       when: website_type == 'joomla'
 
     - name: Custom site deployment
       include_role:
-        name: custom-website
+        name: custom-website  # Deploy a custom website if the website type is 'custom'
       when: website_type == 'custom'

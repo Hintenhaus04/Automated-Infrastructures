@@ -1,3 +1,8 @@
+# This task starts a MariaDB container with specified environment variables,
+# published ports, and volume mappings for persistent storage.
+# It also starts a WordPress container linked to the MariaDB container,
+# with environment variables for database configuration and custom WordPress settings.
+# Both containers are configured to always restart and have their respective ports published.
 - name: Start MariaDB container
   community.docker.docker_container:
     name: "{{ db_container }}"

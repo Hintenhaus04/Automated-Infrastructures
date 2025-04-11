@@ -1,3 +1,8 @@
+# This playbook promotes a Windows server to a Domain Controller.
+# It installs the Active Directory Domain Services (AD DS) feature,
+# reboots the server as needed, and configures the domain settings.
+# Finally, it verifies the promotion by checking the domain role.
+# Ensure the variables (domain_name, domain_netbios_name, safe_mode_password) are set correctly.
 ---
 - name: Promote server to Domain Controller
   hosts: windows

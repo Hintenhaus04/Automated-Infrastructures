@@ -1,3 +1,9 @@
+# This task starts two Docker containers: MySQL and Joomla.
+# The MySQL container is configured with a root password, a database, 
+# and a user for Joomla. It exposes port 3306.
+# The Joomla container connects to the MySQL container using environment 
+# variables and a link. It exposes port 80 for web access.
+# Both containers are set to always restart to ensure availability.
 - name: Start MySQL container
   docker_container:
     name: mysql

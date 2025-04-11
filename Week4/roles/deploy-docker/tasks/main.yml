@@ -1,3 +1,7 @@
+    # This playbook checks if Docker is installed and retrieves its version.
+    # If Docker is not installed or the version is outdated, it installs Docker using a shell script.
+    # It ensures Docker is running and enabled as a service.
+    # Additionally, it waits for Docker to become available before proceeding.
     - name: Controleer of Docker aanwezig is
       command: docker version --format '{{ '{{' }}.Server.Version{{ '}}' }}'
       register: docker_ver

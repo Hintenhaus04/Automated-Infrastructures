@@ -1,3 +1,9 @@
+# This playbook automates the creation and management of domain users.
+# It consists of two plays:
+# 1. The first play parses a CSV file (domain_users.csv) into a YAML file for user data.
+# 2. The second play creates domain users on a domain controller (dc) using the parsed YAML data.
+#    - Users are enabled, prevented from changing passwords, and have additional attributes set.
+#    - Accounts are unlocked using a PowerShell command.
 ---
 - hosts: localhost
   gather_facts: false

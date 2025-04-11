@@ -1,3 +1,8 @@
+# This playbook configures a Windows Server 2022 machine as a Domain Controller.
+# It installs the necessary Active Directory Domain Services feature,
+# promotes the server to a domain controller for the specified domain,
+# and reboots the server if the promotion process requires it.
+# The domain admin password is securely prompted from the user.
 ---
 - name: Configure Windows Server 2022 as Domain Controller
   hosts: windows_servers

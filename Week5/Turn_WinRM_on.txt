@@ -1,0 +1,17 @@
+1. WinRM inschakelen
+
+Enable-PSRemoting -Force
+
+2. WinRM listener controleren of aanmaken
+
+Controleer of er al een listener is:
+
+winrm enumerate winrm/config/listener
+
+Indien nodig, maak een nieuwe listener:
+
+winrm create winrm/config/Listener?Address=*+Transport=HTTP @{Port="5985"}
+
+3. Firewallregel toevoegen
+
+netsh advfirewall firewall add rule name="WinRM HTTP" dir=in action=allow protocol=TCP localport=5985
